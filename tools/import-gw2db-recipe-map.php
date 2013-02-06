@@ -110,9 +110,9 @@ $getItemByGW2DBID = function($gw2dbID) use ($tp, $slots, $worker) {
     return $result;
 };
 
-if (false) foreach ($data as $i => $row) {
+foreach ($data as $i => $row) {
     try {
-        echo "[{$i} / {$cnt}] \n";
+        echo "[{$i} / {$cnt}] {$row['Name']}\n";
 
         if (RecipeQuery::create()->findByGw2dbExternalId($row['ExternalID'])->count() == 0) {
             $r = new Recipe();
@@ -146,9 +146,9 @@ if (false) foreach ($data as $i => $row) {
 
             $r->save();
         }
-    } catch (FailedImportException $e) {
+    } catch (Exception $e) {
         $failed[] = $row;
-        echo "failed [[ {$e->getMessage()} ]] .. \n";
+        echo "row: {$row}\nfailed [[ {$e->getMessage()} ]] .. \n";
     }
 
     if ($max && $i >= $max) {
@@ -156,7 +156,7 @@ if (false) foreach ($data as $i => $row) {
     }
 }
 
-var_dump($failed);
+print_r($failed);
 
 // fix wintersday recipes
 \Propel::getConnection()->exec("UPDATE recipe_ingredient SET count = 5 WHERE recipe_id IN(6761, 6762, 6737) AND item_id = 38143");
