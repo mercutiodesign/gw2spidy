@@ -148,7 +148,7 @@ foreach ($data as $i => $row) {
         }
     } catch (Exception $e) {
         $failed[] = $row;
-        echo "row: {$row}\nfailed [[ {$e->getMessage()} ]] .. \n";
+        echo "failed [[ {$e->getMessage()} ]] .. \n";
     }
 
     if ($max && $i >= $max) {
