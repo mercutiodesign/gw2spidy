@@ -118,7 +118,7 @@ function item_list(Application $app, Request $request, ItemQuery $q, $page, $ite
  * @param  array         $tplVars
  */
 function recipe_list(Application $app, Request $request, RecipeQuery $q, $page, $itemsperpage, array $tplVars = array()) {
-    $sortByOptions = array('name', 'rating', 'cost', 'sell_price', 'profit');
+    $sortByOptions = array('name', 'rating', 'cost', 'sell_price', 'profit', 'sale_availability', 'offer_availability');
 
     foreach ($sortByOptions as $sortByOption) {
         if ($request->get("sort_{$sortByOption}", null)) {
@@ -151,6 +151,10 @@ function recipe_list(Application $app, Request $request, RecipeQuery $q, $page, 
     if($hideLocked = $request->get('hide_unlock_required', null)) {
     	$q->filterByRequiresUnlock(0, \Criteria::EQUAL);
     }
+    
+    $q->join('r.ResultItem')
+      ->withColumn('ResultItem.SaleAvailability','sale_availability')
+      ->withColumn('ResultItem.OfferAvailability','offer_availability');
 
     $count = $q->count();
 
@@ -164,7 +168,6 @@ function recipe_list(Application $app, Request $request, RecipeQuery $q, $page, 
         $lastpage = 1;
     }
 
-    $q->addSelectColumn("*");
 
     $q->offset($itemsperpage * ($page-1))
       ->limit($itemsperpage);

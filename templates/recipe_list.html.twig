@@ -127,6 +127,8 @@
             {{ _self.th_sortable('Cost', 'cost', current_sort, current_sort_order, _context) }}
             {{ _self.th_sortable('Sell Price', 'sell_price', current_sort, current_sort_order, _context) }}
             {{ _self.th_sortable('Profit', 'profit', current_sort, current_sort_order, _context) }}
+            {{ _self.th_sortable('Sale Avail', 'sale_availability', current_sort, current_sort_order, _context) }}
+            {{ _self.th_sortable('Offer Avail', 'offer_availability', current_sort, current_sort_order, _context) }}
         </thead>
         {% for recipe in recipes %}
             <tr class="recipe">
@@ -150,6 +152,8 @@
                 <td class="profit">
                     {{ recipe.profit | gw2money }}
                 </td>
+                <td class="sale_availability">{{ recipe.getsale_availability }}</td>
+                <td class="offer_availability">{{ recipe.getoffer_availability }}</td>
             </tr>
         {% endfor %}
     </table>
