@@ -60,6 +60,7 @@
         <column name="ExternalID" type="integer" />
         <column name="DataID" type="integer" />
         <column name="Name" type="varchar" size="255" />
+        <column name="karma_price" type="integer" required="true" />
     </table>
     <table name="discipline" phpName="Discipline">
         <column name="id" type="integer" required="true" primaryKey="true" />

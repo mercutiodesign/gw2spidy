@@ -35,13 +35,13 @@ abstract class BaseGW2DBItemArchivePeer {
     const TM_CLASS = 'GW2DBItemArchiveTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 5;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /** the column name for the ID field */
     const ID = 'gw2db_item_archive.ID';
@@ -54,6 +54,9 @@ abstract class BaseGW2DBItemArchivePeer {
 
     /** the column name for the NAME field */
     const NAME = 'gw2db_item_archive.NAME';
+
+    /** the column name for the KARMA_PRICE field */
+    const KARMA_PRICE = 'gw2db_item_archive.KARMA_PRICE';
 
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -74,12 +77,12 @@ abstract class BaseGW2DBItemArchivePeer {
      * e.g. GW2DBItemArchivePeer::$fieldNames[GW2DBItemArchivePeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'Externalid', 'Dataid', 'Name', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'externalid', 'dataid', 'name', ),
-        BasePeer::TYPE_COLNAME => array (GW2DBItemArchivePeer::ID, GW2DBItemArchivePeer::EXTERNALID, GW2DBItemArchivePeer::DATAID, GW2DBItemArchivePeer::NAME, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'EXTERNALID', 'DATAID', 'NAME', ),
-        BasePeer::TYPE_FIELDNAME => array ('ID', 'ExternalID', 'DataID', 'Name', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'Externalid', 'Dataid', 'Name', 'KarmaPrice', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'externalid', 'dataid', 'name', 'karmaPrice', ),
+        BasePeer::TYPE_COLNAME => array (GW2DBItemArchivePeer::ID, GW2DBItemArchivePeer::EXTERNALID, GW2DBItemArchivePeer::DATAID, GW2DBItemArchivePeer::NAME, GW2DBItemArchivePeer::KARMA_PRICE, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'EXTERNALID', 'DATAID', 'NAME', 'KARMA_PRICE', ),
+        BasePeer::TYPE_FIELDNAME => array ('ID', 'ExternalID', 'DataID', 'Name', 'karma_price', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
     );
 
     /**
@@ -89,12 +92,12 @@ abstract class BaseGW2DBItemArchivePeer {
      * e.g. GW2DBItemArchivePeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Externalid' => 1, 'Dataid' => 2, 'Name' => 3, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'externalid' => 1, 'dataid' => 2, 'name' => 3, ),
-        BasePeer::TYPE_COLNAME => array (GW2DBItemArchivePeer::ID => 0, GW2DBItemArchivePeer::EXTERNALID => 1, GW2DBItemArchivePeer::DATAID => 2, GW2DBItemArchivePeer::NAME => 3, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'EXTERNALID' => 1, 'DATAID' => 2, 'NAME' => 3, ),
-        BasePeer::TYPE_FIELDNAME => array ('ID' => 0, 'ExternalID' => 1, 'DataID' => 2, 'Name' => 3, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Externalid' => 1, 'Dataid' => 2, 'Name' => 3, 'KarmaPrice' => 4, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'externalid' => 1, 'dataid' => 2, 'name' => 3, 'karmaPrice' => 4, ),
+        BasePeer::TYPE_COLNAME => array (GW2DBItemArchivePeer::ID => 0, GW2DBItemArchivePeer::EXTERNALID => 1, GW2DBItemArchivePeer::DATAID => 2, GW2DBItemArchivePeer::NAME => 3, GW2DBItemArchivePeer::KARMA_PRICE => 4, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'EXTERNALID' => 1, 'DATAID' => 2, 'NAME' => 3, 'KARMA_PRICE' => 4, ),
+        BasePeer::TYPE_FIELDNAME => array ('ID' => 0, 'ExternalID' => 1, 'DataID' => 2, 'Name' => 3, 'karma_price' => 4, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
     );
 
     /**
@@ -172,11 +175,13 @@ abstract class BaseGW2DBItemArchivePeer {
             $criteria->addSelectColumn(GW2DBItemArchivePeer::EXTERNALID);
             $criteria->addSelectColumn(GW2DBItemArchivePeer::DATAID);
             $criteria->addSelectColumn(GW2DBItemArchivePeer::NAME);
+            $criteria->addSelectColumn(GW2DBItemArchivePeer::KARMA_PRICE);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.EXTERNALID');
             $criteria->addSelectColumn($alias . '.DATAID');
             $criteria->addSelectColumn($alias . '.NAME');
+            $criteria->addSelectColumn($alias . '.KARMA_PRICE');
         }
     }
 

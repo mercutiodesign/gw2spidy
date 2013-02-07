@@ -71,6 +71,12 @@ abstract class BaseGW2DBItemArchive extends BaseObject implements Persistent
     protected $name;
 
     /**
+     * The value for the karma_price field.
+     * @var        int
+     */
+    protected $karma_price;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -126,6 +132,17 @@ abstract class BaseGW2DBItemArchive extends BaseObject implements Persistent
     {
 
         return $this->name;
+    }
+
+    /**
+     * Get the [karma_price] column value.
+     * 
+     * @return   int
+     */
+    public function getKarmaPrice()
+    {
+
+        return $this->karma_price;
     }
 
     /**
@@ -213,6 +230,27 @@ abstract class BaseGW2DBItemArchive extends BaseObject implements Persistent
     } // setName()
 
     /**
+     * Set the value of [karma_price] column.
+     * 
+     * @param      int $v new value
+     * @return   GW2DBItemArchive The current object (for fluent API support)
+     */
+    public function setKarmaPrice($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->karma_price !== $v) {
+            $this->karma_price = $v;
+            $this->modifiedColumns[] = GW2DBItemArchivePeer::KARMA_PRICE;
+        }
+
+
+        return $this;
+    } // setKarmaPrice()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -248,6 +286,7 @@ abstract class BaseGW2DBItemArchive extends BaseObject implements Persistent
             $this->externalid = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
             $this->dataid = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
             $this->name = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+            $this->karma_price = ($row[$startcol + 4] !== null) ? (int) $row[$startcol + 4] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -256,7 +295,7 @@ abstract class BaseGW2DBItemArchive extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
 
-            return $startcol + 4; // 4 = GW2DBItemArchivePeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = GW2DBItemArchivePeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating GW2DBItemArchive object", $e);
@@ -476,6 +515,9 @@ abstract class BaseGW2DBItemArchive extends BaseObject implements Persistent
         if ($this->isColumnModified(GW2DBItemArchivePeer::NAME)) {
             $modifiedColumns[':p' . $index++]  = '`NAME`';
         }
+        if ($this->isColumnModified(GW2DBItemArchivePeer::KARMA_PRICE)) {
+            $modifiedColumns[':p' . $index++]  = '`KARMA_PRICE`';
+        }
 
         $sql = sprintf(
             'INSERT INTO `gw2db_item_archive` (%s) VALUES (%s)',
@@ -498,6 +540,9 @@ abstract class BaseGW2DBItemArchive extends BaseObject implements Persistent
                         break;
                     case '`NAME`':
 						$stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
+                        break;
+                    case '`KARMA_PRICE`':
+						$stmt->bindValue($identifier, $this->karma_price, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -638,6 +683,9 @@ abstract class BaseGW2DBItemArchive extends BaseObject implements Persistent
             case 3:
                 return $this->getName();
                 break;
+            case 4:
+                return $this->getKarmaPrice();
+                break;
             default:
                 return null;
                 break;
@@ -670,6 +718,7 @@ abstract class BaseGW2DBItemArchive extends BaseObject implements Persistent
             $keys[1] => $this->getExternalid(),
             $keys[2] => $this->getDataid(),
             $keys[3] => $this->getName(),
+            $keys[4] => $this->getKarmaPrice(),
         );
 
         return $result;
@@ -716,6 +765,9 @@ abstract class BaseGW2DBItemArchive extends BaseObject implements Persistent
             case 3:
                 $this->setName($value);
                 break;
+            case 4:
+                $this->setKarmaPrice($value);
+                break;
         } // switch()
     }
 
@@ -744,6 +796,7 @@ abstract class BaseGW2DBItemArchive extends BaseObject implements Persistent
         if (array_key_exists($keys[1], $arr)) $this->setExternalid($arr[$keys[1]]);
         if (array_key_exists($keys[2], $arr)) $this->setDataid($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setName($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setKarmaPrice($arr[$keys[4]]);
     }
 
     /**
@@ -759,6 +812,7 @@ abstract class BaseGW2DBItemArchive extends BaseObject implements Persistent
         if ($this->isColumnModified(GW2DBItemArchivePeer::EXTERNALID)) $criteria->add(GW2DBItemArchivePeer::EXTERNALID, $this->externalid);
         if ($this->isColumnModified(GW2DBItemArchivePeer::DATAID)) $criteria->add(GW2DBItemArchivePeer::DATAID, $this->dataid);
         if ($this->isColumnModified(GW2DBItemArchivePeer::NAME)) $criteria->add(GW2DBItemArchivePeer::NAME, $this->name);
+        if ($this->isColumnModified(GW2DBItemArchivePeer::KARMA_PRICE)) $criteria->add(GW2DBItemArchivePeer::KARMA_PRICE, $this->karma_price);
 
         return $criteria;
     }
@@ -825,6 +879,7 @@ abstract class BaseGW2DBItemArchive extends BaseObject implements Persistent
         $copyObj->setExternalid($this->getExternalid());
         $copyObj->setDataid($this->getDataid());
         $copyObj->setName($this->getName());
+        $copyObj->setKarmaPrice($this->getKarmaPrice());
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -880,6 +935,7 @@ abstract class BaseGW2DBItemArchive extends BaseObject implements Persistent
         $this->externalid = null;
         $this->dataid = null;
         $this->name = null;
+        $this->karma_price = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->clearAllReferences();
