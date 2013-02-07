@@ -1,5 +1,4 @@
 <?php
-
 use \DateTime;
 use GW2Spidy\DB\RecipeQuery;
 
@@ -16,8 +15,7 @@ if (isset($argv[1])) {
 }
 
 while (($recipes = $q->find()) && $recipes->count()) {
-	if($i % 10 == 0)
-    	echo "$i\n";
+	echo  "[" . date("Y-m-d H:i:s") . "] $i\n";
 
     /* @var $recipe GW2Spidy\DB\Recipe */
     foreach ($recipes as $recipe) {
