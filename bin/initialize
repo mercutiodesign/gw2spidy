@@ -1,0 +1,16 @@
+# ##########
+# init project
+# ##########
+php tools/purge-cache.php
+php tools/setup-request-slots.php
+php daemons/worker-types.php
+php tools/purge-cache.php
+php daemons/fill-queue-item-db.php
+
+# raw estimate xD
+for i in {1..25}; do
+    php daemons/worker-queue-item-db.php
+done
+
+php daemons/fill-queue-item-listing-db.php
+php daemons/worker-queue-item-db.php
