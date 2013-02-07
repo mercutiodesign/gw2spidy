@@ -129,13 +129,25 @@ function recipe_list(Application $app, Request $request, RecipeQuery $q, $page, 
 
     $sortBy    = isset($sortBy)    && in_array($sortBy, $sortByOptions)          ? $sortBy    : 'profit';
     $sortOrder = isset($sortOrder) && in_array($sortOrder, array('asc', 'desc')) ? $sortOrder : 'desc';
+    
+    $minLevelFilter = $request->get('min_level', null);
+    $maxLevelFilter = $request->get('max_level', null);
+    if ($minLevelFilter || $maxLevelFilter) {
+        $iq = $q->useResultItemQuery();
+        if ($minLevelFilter)
+            $iq->filterByRestrictionLevel($minLevelFilter, \Criteria::GREATER_EQUAL);
+        if($maxLevelFilter)
+            $iq->filterByRestrictionLevel($maxLevelFilter, \Criteria::LESS_EQUAL);
+        $iq->endUse();
+    }
+    
+    if ($minRatingFilter = $request->get('min_rating', null)) {
+        $q->filterByRating($minRatingFilter, \Criteria::GREATER_EQUAL);
+    }
+    if ($maxRatingFilter = $request->get('max_rating', null)) {
+        $q->filterByRating($maxRatingFilter, \Criteria::LESS_EQUAL);
+    }
 
-    if ($minLevelFilter = $request->get('min_level', null)) {
-        $q->filterByRating($minLevelFilter, \Criteria::GREATER_EQUAL);
-    }
-    if ($maxLevelFilter = $request->get('max_level', null)) {
-        $q->filterByRating($maxLevelFilter, \Criteria::LESS_EQUAL);
-    }
     if($hideLocked = $request->get('hide_unlock_required', null)) {
     	$q->filterByRequiresUnlock(0, \Criteria::EQUAL);
     }
@@ -172,6 +184,8 @@ function recipe_list(Application $app, Request $request, RecipeQuery $q, $page, 
 
         'min_level' => $minLevelFilter,
         'max_level' => $maxLevelFilter,
+        'min_rating' => $minRatingFilter,
+        'max_rating' => $maxRatingFilter,
         'hide_unlock_required' => $hideLocked,
 
         'current_sort'       => $sortBy,
@@ -213,54 +227,7 @@ function gem_summary() {
     );
 }
 
-function gcd($n, $m) {
-   if ($n == 0 and $m == 0)
-       return 1; //avoid infinite recursion
-   if ($n == $m and $n >= 1)
-       return $n;
-   return $m < $n ? gcd($n-$m, $n) : gcd($n, $m-$n);
-}
-
-function lcm($n, $m) {
-   return $m * $n / gcd($n, $m);
-}
-
-function calculateRecipeMultiplier($item, $recipe = null) {
-
-	if($recipe) {	
-		$multiplier = 1;
-			
-        foreach ($recipe->getIngredients() as $ingredient) {
-        	$ingredientItem   = $ingredient->getItem();
-            $ingredientRecipe = null;
-
-            $ingredientRecipes = $ingredientItem->getResultOfRecipes();
-
-            if (count($ingredientRecipes)) {
-                $ingredientRecipe = $ingredientRecipes[0];
-                
-                // if the least common multiple is bigger than the count in the recipe
-                $ingredientAmount = lcm($ingredientRecipe->getCount(), $ingredient->getCount());
-                if($ingredientAmount > $ingredient->getCount()) {
-                    // we need to increase the multiplier
-		            $multiplier = lcm($ingredientAmount / $ingredient->getCount(), $multiplier);
-                }
-                
-                $multiplier = lcm(calculateRecipeMultiplier($ingredientItem, $ingredientRecipe), $multiplier);
-            }
-        }
-	
-		return $multiplier;
-	}
-		
-	return 1;
-}
-
-function buildMultiRecipeTree($item, $recipe = null, $app) {
-	return buildRecipeTree($item, $recipe, $app, calculateRecipeMultiplier($item, $recipe));
-}
-
-function buildRecipeTree($item, $recipe = null, $app, $multiplier = 1) {
+function buildRecipeTree($item, $recipe = null, $app) {
     $tree = array(
         'id' => $item->getDataId(),
         'name' => $item->getName(),
@@ -269,8 +236,7 @@ function buildRecipeTree($item, $recipe = null, $app, $multiplier = 1) {
         'rarity' => $item->getRarityName(),
         'img'	=> $item->getImg(),
         'price' => $item->getBestPrice(),
-        'vendor' => !!$item->getVendorPrice(),
-        'multiplier' => $multiplier
+        'vendor' => !!$item->getVendorPrice()
     );
 
     if ($recipe) {
@@ -281,23 +247,15 @@ function buildRecipeTree($item, $recipe = null, $app, $multiplier = 1) {
             $ingredientRecipe = null;
 
             $ingredientRecipes = $ingredientItem->getResultOfRecipes();
-			
-			$ingredientMultiplier = $multiplier;
+
             if (count($ingredientRecipes)) {
-                $ingredientRecipe = $ingredientRecipes[0];                
-                
-                // if the least common multiple is bigger than the count in the recipe
-                $ingredientAmount = lcm($ingredientRecipe->getCount(), $ingredient->getCount());
-                if($ingredientAmount > $ingredient->getCount()) {
-                    // we need to decrease the multiplier for the items in the sub-tree
-		            $ingredientMultiplier /= $ingredientAmount / $ingredient->getCount();
-                }
+                $ingredientRecipe = $ingredientRecipes[0];
             }
-            
-            $recipeTree[] = array(buildRecipeTree($ingredientItem, $ingredientRecipe, $app, $ingredientMultiplier), $ingredient->getCount() * $multiplier);
+
+            $recipeTree[] = array(buildRecipeTree($ingredientItem, $ingredientRecipe, $app), $ingredient->getCount());
         }
 
-        $tree['recipe'] = array('count' => $recipe->getCount() * $multiplier, 'ingredients' => $recipeTree);
+        $tree['recipe'] = array('count' => $recipe->getCount(), 'ingredients' => $recipeTree);
     }
 
     return $tree;
