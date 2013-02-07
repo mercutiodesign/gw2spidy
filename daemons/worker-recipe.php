@@ -29,8 +29,12 @@ while (($recipes = $q->find()) && $recipes->count()) {
 			$recipe->setProfit(($recipe->getSellPrice() * 0.85) - $price);
 
 			$recipe->save();
+            
+            if(isset($argv[1])) {
+                echo "Name: {$recipe->getName()}, Count: {$recipe->getCount()}, Price: {$price}, Sell Price: {$recipe->getSellPrice()}, Profit: {$recipe->getProfit()}\n";
+            }
 	    } else {
-	    	echo "Error with recipe (no resultitem): {$recipe->getName()}\n";
+	    	echo "Error with recipe (No Item in database with ID \"{$recipe->getResultItemId()}\"): {$recipe->getName()}\n";
 	    }
 
         if (in_array('--dev', $argv)) {
