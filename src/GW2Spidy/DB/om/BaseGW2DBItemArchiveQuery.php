@@ -24,11 +24,13 @@ use GW2Spidy\DB\GW2DBItemArchiveQuery;
  * @method     GW2DBItemArchiveQuery orderByExternalid($order = Criteria::ASC) Order by the ExternalID column
  * @method     GW2DBItemArchiveQuery orderByDataid($order = Criteria::ASC) Order by the DataID column
  * @method     GW2DBItemArchiveQuery orderByName($order = Criteria::ASC) Order by the Name column
+ * @method     GW2DBItemArchiveQuery orderByKarmaPrice($order = Criteria::ASC) Order by the karma_price column
  *
  * @method     GW2DBItemArchiveQuery groupById() Group by the ID column
  * @method     GW2DBItemArchiveQuery groupByExternalid() Group by the ExternalID column
  * @method     GW2DBItemArchiveQuery groupByDataid() Group by the DataID column
  * @method     GW2DBItemArchiveQuery groupByName() Group by the Name column
+ * @method     GW2DBItemArchiveQuery groupByKarmaPrice() Group by the karma_price column
  *
  * @method     GW2DBItemArchiveQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     GW2DBItemArchiveQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -41,11 +43,13 @@ use GW2Spidy\DB\GW2DBItemArchiveQuery;
  * @method     GW2DBItemArchive findOneByExternalid(int $ExternalID) Return the first GW2DBItemArchive filtered by the ExternalID column
  * @method     GW2DBItemArchive findOneByDataid(int $DataID) Return the first GW2DBItemArchive filtered by the DataID column
  * @method     GW2DBItemArchive findOneByName(string $Name) Return the first GW2DBItemArchive filtered by the Name column
+ * @method     GW2DBItemArchive findOneByKarmaPrice(int $karma_price) Return the first GW2DBItemArchive filtered by the karma_price column
  *
  * @method     array findById(int $ID) Return GW2DBItemArchive objects filtered by the ID column
  * @method     array findByExternalid(int $ExternalID) Return GW2DBItemArchive objects filtered by the ExternalID column
  * @method     array findByDataid(int $DataID) Return GW2DBItemArchive objects filtered by the DataID column
  * @method     array findByName(string $Name) Return GW2DBItemArchive objects filtered by the Name column
+ * @method     array findByKarmaPrice(int $karma_price) Return GW2DBItemArchive objects filtered by the karma_price column
  *
  * @package    propel.generator.gw2spidy.om
  */
@@ -136,7 +140,7 @@ abstract class BaseGW2DBItemArchiveQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `ID`, `EXTERNALID`, `DATAID`, `NAME` FROM `gw2db_item_archive` WHERE `ID` = :p0';
+        $sql = 'SELECT `ID`, `EXTERNALID`, `DATAID`, `NAME`, `KARMA_PRICE` FROM `gw2db_item_archive` WHERE `ID` = :p0';
         try {
             $stmt = $con->prepare($sql);
 			$stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -361,6 +365,47 @@ abstract class BaseGW2DBItemArchiveQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(GW2DBItemArchivePeer::NAME, $name, $comparison);
+    }
+
+    /**
+     * Filter the query on the karma_price column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByKarmaPrice(1234); // WHERE karma_price = 1234
+     * $query->filterByKarmaPrice(array(12, 34)); // WHERE karma_price IN (12, 34)
+     * $query->filterByKarmaPrice(array('min' => 12)); // WHERE karma_price > 12
+     * </code>
+     *
+     * @param     mixed $karmaPrice The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return GW2DBItemArchiveQuery The current query, for fluid interface
+     */
+    public function filterByKarmaPrice($karmaPrice = null, $comparison = null)
+    {
+        if (is_array($karmaPrice)) {
+            $useMinMax = false;
+            if (isset($karmaPrice['min'])) {
+                $this->addUsingAlias(GW2DBItemArchivePeer::KARMA_PRICE, $karmaPrice['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($karmaPrice['max'])) {
+                $this->addUsingAlias(GW2DBItemArchivePeer::KARMA_PRICE, $karmaPrice['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(GW2DBItemArchivePeer::KARMA_PRICE, $karmaPrice, $comparison);
     }
 
     /**

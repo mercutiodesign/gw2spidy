@@ -92,6 +92,7 @@ CREATE TABLE `gw2db_item_archive`
     `ExternalID` INTEGER,
     `DataID` INTEGER,
     `Name` VARCHAR(255),
+    `karma_price` INTEGER NOT NULL,
     PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM;
 
