@@ -26,7 +26,7 @@ $cnt  = count($data);
 
 $stmt = Propel::getConnection()->prepare("UPDATE gw2db_item_archive 
                                              SET karma_price = :karma_price
-                                           WHERE data_id = :data_id");
+                                           WHERE DataId = :data_id");
 
 foreach ($data as $i => $row) {
     if($i % 100 == 0)
