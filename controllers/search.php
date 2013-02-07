@@ -52,7 +52,7 @@ $app->get("/search/{search}/{page}", function(Request $request, $search, $page) 
     if ($recipes) {
         $route = 'recipe';
         $getQ = function($search) {
-            $q = RecipeQuery::create();
+            $q = RecipeQuery::create('r');
             $q->filterByName("%{$search}%");
 
             return $q;
