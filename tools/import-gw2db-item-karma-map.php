@@ -24,9 +24,12 @@ CacheHandler::getInstance("purge")->purge();
 $data = json_decode(file_get_contents($mapfilename), true);
 $cnt  = count($data);
 
-$stmt = Propel::getConnection()->prepare("UPDATE gw2db_item_archive 
-                                             SET karma_price = :karma_price
-                                           WHERE DataId = :data_id");
+$stmt = Propel::getConnection()->prepare(
+"UPDATE gw2db_item_archive LEFT JOIN item
+     ON gw2db_item_archive.DataID = item.data_id
+    SET gw2db_item_archive.karma_price = :karma_price, 
+        item.karma_price = :karma_price
+  WHERE gw2db_item_archive.DataID = :data_id");
                                            
 $bulk = Propel::getConnection()->prepare(
 "UPDATE gw2db_item_archive LEFT JOIN item
