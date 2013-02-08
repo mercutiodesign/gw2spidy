@@ -301,7 +301,7 @@ function buildRecipeTree($item, $recipe = null, $app, $multiplier = 1) {
         'price' => $item->getBestPrice(),
         'karma' => $item->getKarmaPrice(),
         'vendor' => !!$item->getVendorPrice(),
-        'multiplier' => $multiplier
+        'multiplier' => $multiplier,
     );
 
     if ($recipe) {
