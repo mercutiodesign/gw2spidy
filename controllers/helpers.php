@@ -299,6 +299,7 @@ function buildRecipeTree($item, $recipe = null, $app, $multiplier = 1) {
         'rarity' => $item->getRarityName(),
         'img'	=> $item->getImg(),
         'price' => $item->getBestPrice(),
+        'karma' => $item->getKarmaPrice(),
         'vendor' => !!$item->getVendorPrice(),
         'multiplier' => $multiplier
     );
