@@ -97,6 +97,7 @@
                         <input class="input-mini" placeholder="max" type="text" name="max_level" id="max_level" value="{{ max_level }}" />
                     </div>
                 </div>
+                
                 <div class="control-group">
                     <label class="control-label" for="min_rating">Rating:</label>
                     <div class="controls">
@@ -104,12 +105,14 @@
                         <input class="input-mini" placeholder="max" type="text" name="max_rating" id="max_rating" value="{{ max_rating }}" />
                     </div>
                 </div>
+                
                 <div class="control-group">
                     <label class="control-label" for="hide_unlock_required">Hide recipes that require an unlock:</label>
                     <div class="controls">
                         <input type="checkbox" name="hide_unlock_required" id="hide_unlock_required" {% if hide_unlock_required %}checked="checked"{% endif %}>
                     </div>
                 </div>
+                
                 <div class="control-group">
                     <div class="controls">
                       <input type="submit" value="Filter" class="btn" />
