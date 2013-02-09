@@ -77,17 +77,12 @@ foreach ($data as $i => $row) {
     }
 
     $stmt->execute();
-    if ($stmt->rowCount() <= 0) {
-        if (ItemQuery::create()->filterByDataId($row['DataID'])->count() == 0) {
-
-            if (!($i = GW2DBItemArchiveQuery::create()->findPk($row['ID']))) {
-                $i = new GW2DBItemArchive();
-            }
-
-            $i->fromArray($row, BasePeer::TYPE_FIELDNAME);
-            $i->save();
-        } 
+    if (!($i = GW2DBItemArchiveQuery::create()->findPk($row['ID']))) {
+        $i = new GW2DBItemArchive();
     }
+
+    $i->fromArray($row, BasePeer::TYPE_FIELDNAME);
+    $i->save();
 }
 
 
