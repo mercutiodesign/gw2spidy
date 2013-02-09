@@ -7,3 +7,5 @@ Thumbs.db
 Desktop.ini
 .*.sw[a-z]
 .DS_Store
+
+webroot/assets/img/freshness.png
