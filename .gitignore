@@ -8,4 +8,4 @@ Desktop.ini
 .*.sw[a-z]
 .DS_Store
 
-webroot/assets/img/freshness.png
+webroot/assets/img/freshness*.png
