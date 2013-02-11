@@ -46,7 +46,6 @@ class GW2DBItemArchiveTableMap extends TableMap
         $this->addColumn('EXTERNALID', 'Externalid', 'INTEGER', false, null, null);
         $this->addColumn('DATAID', 'Dataid', 'INTEGER', false, null, null);
         $this->addColumn('NAME', 'Name', 'VARCHAR', false, 255, null);
-        $this->addColumn('KARMA_PRICE', 'KarmaPrice', 'INTEGER', true, null, null);
         // validators
     } // initialize()
 
