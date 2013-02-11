@@ -45,4 +45,4 @@ target = folder + 'freshness.png'
 plt.savefig(target, transparent=True)
 
 import shutil
-shutil.copy(target, folder + 'freshness.' + str(datetime.now()).replace(':','-') + '.png')
+shutil.copy(target, os.path.dirname(sys.argv[0]) + '/../../galleria/img/freshness.' + str(datetime.now()).replace(':','-') + '.png')
