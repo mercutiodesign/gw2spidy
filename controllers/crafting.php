@@ -34,7 +34,7 @@ $app->get("/crafting/{discipline}/{page}", function(Request $request, $disciplin
     $page = $page > 0 ? $page : 1;
     $itemsperpage = 50;
 
-    $q = RecipeQuery::create('r');
+    $q = RecipeQuery::create();
 
     if ($discipline == -1) {
         $discipline = null;
