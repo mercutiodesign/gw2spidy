@@ -129,7 +129,7 @@ function recipe_list(Application $app, Request $request, RecipeQuery $q, $page, 
 
     $sortBy    = isset($sortBy)    && in_array($sortBy, $sortByOptions)          ? $sortBy    : 'profit';
     $sortOrder = isset($sortOrder) && in_array($sortOrder, array('asc', 'desc')) ? $sortOrder : 'desc';
-    
+
     $minLevelFilter = $request->get('min_level', null);
     $maxLevelFilter = $request->get('max_level', null);
     if ($minLevelFilter || $maxLevelFilter) {
@@ -140,7 +140,7 @@ function recipe_list(Application $app, Request $request, RecipeQuery $q, $page, 
             $iq->filterByRestrictionLevel($maxLevelFilter, \Criteria::LESS_EQUAL);
         $iq->endUse();
     }
-    
+
     if ($minRatingFilter = $request->get('min_rating', null)) {
         $q->filterByRating($minRatingFilter, \Criteria::GREATER_EQUAL);
     }
@@ -258,27 +258,27 @@ function multiplier($base, $multiple) {
 }
 
 function calculateRecipeMultiplier($item, $recipe = null) {
-    
+
     if($recipe) {
         $multiplier = 1;
-        
+
         foreach ($recipe->getIngredients() as $ingredient) {
             $ingredientItem   = $ingredient->getItem();
             $ingredientRecipe = null;
-            
+
             $ingredientRecipes = $ingredientItem->getResultOfRecipes();
-            
+
             if (count($ingredientRecipes)) {
                 $ingredientRecipe = $ingredientRecipes[0];
-                
+
                 $baseCount = $ingredientRecipe->getCount() * calculateRecipeMultiplier($ingredientItem, $ingredientRecipe);
-                $multiplier *= multiplier($baseCount, $multiplier * $ingredient->getCount());        
+                $multiplier *= multiplier($baseCount, $multiplier * $ingredient->getCount());
             }
         }
-        
+
         return $multiplier;
     }
-    
+
     return 1;
 }
 
@@ -295,32 +295,32 @@ function buildRecipeTree($item, $recipe = null, $app, $multiplier = 1) {
         'rarity' => $item->getRarityName(),
         'img'	=> $item->getImg(),
         'price' => $item->getBestPrice(),
-        'karma' => $item->getKarmaPrice(),
         'vendor' => !!$item->getVendorPrice(),
         'multiplier' => $multiplier,
+        'karma' => $item->getKarmaPrice(),
     );
-    
+
     if ($recipe) {
         $recipeTree = array();
-        
+
         foreach ($recipe->getIngredients() as $ingredient) {
             $ingredientItem   = $ingredient->getItem();
             $ingredientRecipe = null;
 
             $ingredientRecipes = $ingredientItem->getResultOfRecipes();
-            
+
             $ingredientMultiplier = $multiplier;
             if (count($ingredientRecipes)) {
-                $ingredientRecipe = $ingredientRecipes[0];                
+                $ingredientRecipe = $ingredientRecipes[0];
                 $ingredientMultiplier /= multiplier($ingredientRecipe->getCount(), $ingredient->getCount());
             }
-            
+
             $recipeTree[] = array(buildRecipeTree($ingredientItem, $ingredientRecipe, $app, $ingredientMultiplier), $ingredient->getCount() * $multiplier);
         }
-        
+
         $tree['recipe'] = array('count' => $recipe->getCount() * $multiplier, 'ingredients' => $recipeTree);
     }
-    
+
     return $tree;
 }
 

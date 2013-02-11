@@ -42,6 +42,20 @@ $stmt_withprice = Propel::getConnection()->prepare("UPDATE item SET
                                                           karma_price = :karma_price
                                                       WHERE data_id = :data_id");
 
+$bulk = Propel::getConnection()->prepare(
+        "UPDATE item SET item.karma_price = :karma_price WHERE name = :name OR name = :names");
+
+// fix for some words where the plural is irregular
+$singular = array(
+    "Tomatoe"       => "Tomato",
+    "Cherrie"       => "Cherry",
+    "Peache"        => "Peach",
+    "Buttermilk"    => "Glass of Buttermilk",
+    "Rice"          => "Rice Ball",
+    "Sour Cream"    => "Bowl[s] of Sour Cream",
+    "Yeast"         => "Packet[s] of Yeast",
+);
+
 foreach ($data as $i => $row) {
 	if($i % 100 == 0)
 	    echo "[{$i} / {$cnt}] \n";
@@ -49,12 +63,11 @@ foreach ($data as $i => $row) {
     if (strpos($row['Name'], "Recipe: ") !== false) {
         continue;
     }
-    
 
     $lowestPrice = 0;
     $lowestKarma = 0;
     if (isset($row['SoldBy'])) {
-        foreach($row['SoldBy'] as $r) {    
+        foreach($row['SoldBy'] as $r) {
             if (isset($r['GoldCost']) && ($r['GoldCost'] < $lowestPrice ||  $lowestPrice == 0)) {
                 $lowestPrice = $r['GoldCost'];
             }
@@ -63,7 +76,7 @@ foreach ($data as $i => $row) {
             }
         }
     }
-    
+
     $stmt = ($lowestKarma > 0 || $lowestPrice > 0) ? $stmt_withprice : $stmt_noprice;
 
     $stmt->bindValue('name', $row['Name']);
@@ -77,12 +90,33 @@ foreach ($data as $i => $row) {
     }
 
     $stmt->execute();
-    if (!($i = GW2DBItemArchiveQuery::create()->findPk($row['ID']))) {
-        $i = new GW2DBItemArchive();
+
+    if ($stmt->rowCount() <= 0) {
+        if (ItemQuery::create()->filterByDataId($row['DataID'])->count() == 0) {
+
+            if (!($i = GW2DBItemArchiveQuery::create()->findPk($row['ID']))) {
+                $i = new GW2DBItemArchive();
+            }
+
+            $i->fromArray($row, BasePeer::TYPE_FIELDNAME);
+            $i->save();
+        }
     }
 
-    $i->fromArray($row, BasePeer::TYPE_FIELDNAME);
-    $i->save();
+    if(preg_match("/^(.+?)s? in Bulk$/", $row['Name'], $match)) {
+        $name = $match[1];
+        if(array_key_exists($name, $singular)) {
+            $name = $singular[$name];
+        }
+
+        echo "[{$i} / {$cnt}]: {$name} !!BULK!! ";
+
+        $bulk->bindValue('name', $name);
+        $bulk->bindValue('names', "{$name}[s]");
+        $bulk->bindValue('karma_price', ceil($lowestKarma / 25));
+        $bulk->execute();
+        echo "{$bulk->rowCount()} updated.\n";
+    }
 }
 
 
