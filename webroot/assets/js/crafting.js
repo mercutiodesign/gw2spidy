@@ -29,7 +29,7 @@ var Crafting = function(item, container, summarycontainer) {
             var $row = $("<tr />");
 
             $row.append($('<td />').html(ingredient[0]));
-            $row.append($('<td data-tooltip-href="'+ingredient[1].gw2db_href+'" />').html(ingredient[1].name).css('font-weight', 'bold').addClass('rarity-' + ingredient[1].rarity));
+            $row.append($('<td data-tooltip-href="'+ingredient[1].gw2db_href+'" />').html(ingredient[1].name).css('font-weight', 'bold').addClass('rarity-' + ingredient[1].rarity.toLowerCase()));
             if(ingredient[1].price == 0 && ingredient[1].karma > 0) {
                 $row.append($('<td />').html(ingredient[1].karma + karmaIcon));
                 $row.append($('<td />').html(ingredient[1].karma * ingredient[0] + karmaIcon));
