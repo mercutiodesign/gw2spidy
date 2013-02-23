@@ -206,8 +206,18 @@ function recipe_list(Application $app, Request $request, RecipeQuery $q, $page, 
 
         'current_sort'       => $sortBy,
         'current_sort_order' => $sortOrder,
+        
+        'show_karma' => $sortBy == 'karma_cost' || has_karma_cost($recipes),
     ));
 };
+
+function has_karma_cost($recipes) {
+    foreach ($recipes as $r) {
+        if($r->getKarmaCost() > 0)
+            return true;
+    }
+    return false;
+}
 
 function gem_summary() {
     $lastSell = GemToGoldRateQuery::create()
