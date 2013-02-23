@@ -72,7 +72,7 @@ class GenericHelpersExtension extends \Twig_Extension {
         $difference = time() - strtotime($timestamp);
         $periods = array("second", "minute", "hour");
         $lengths = array(60, 60, 24);
-        for($j = 0; $j < 3 && $difference >= $lengths[$j]; $j++)
+        for($j = 0; $j < 2 && $difference >= $lengths[$j]; $j++)
             $difference /= $lengths[$j];
         $difference = round($difference);
         if($difference != 1) $periods[$j].= "s";
